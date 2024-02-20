@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import com.crypto.fundingrate.data.remote.dto.formatNumberWithThousandsSeparator
 import com.crypto.fundingrate.domain.model.FundingRate
 import com.crypto.fundingrate.presentation.fundingratescreen.FundingRateScreenViewModel
+import com.crypto.fundingrate.ui.fundingratescreen.LoadingScreen
+import com.crypto.fundingrate.ui.fundingratescreen.RateScreen
 import com.crypto.fundingrate.ui.theme.FundingRateTheme
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -61,102 +63,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun RowScope.TableHeader(
-    text: String,
-    weight: Float
-) {
-    TableRow(text, weight, true)
-}
-@Composable
-fun RowScope.TableRow(
-    text: String,
-    weight: Float,
-    isHeader: Boolean = false
-) {
-    Text(
-        text = text,
-        fontWeight = if (isHeader) FontWeight.Bold else FontWeight.Light,
-        modifier = Modifier
-            .border(1.dp, MaterialTheme.colorScheme.onPrimary)
-            .weight(weight)
-            .padding(8.dp)
-    )
-}
-
-@Composable
-fun LoadingScreen() {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.secondary),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        CircularProgressIndicator(
-            modifier = Modifier
-                .width(128.dp)
-                .height(128.dp),
-            color = MaterialTheme.colorScheme.tertiary,
-            trackColor = MaterialTheme.colorScheme.primaryContainer,
-        )
-    }
-
-}
-
-object ColumnConfig {
-    // Each cell of a column must have the same weight.
-    const val COLUMN_1_WEIGHT = .3f // 20%
-    const val COLUMN_2_WEIGHT = .4f // 30%
-    const val COLUMN_3_WEIGHT = .4f // 30%
-}
-
-@Composable
-fun RateScreen(coins: List<FundingRate>, isLoading: Boolean, onRefresh: () -> Unit) {
-
-    SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing = isLoading), onRefresh = onRefresh) {
-        // The LazyColumn will be our table. Notice the use of the weights below
-        LazyColumn(
-            Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.tertiaryContainer)) {
-            // Here is the header
-            item {
-                Row(Modifier.background(MaterialTheme.colorScheme.primaryContainer)) {
-                    TableHeader(text = "Coin", weight = ColumnConfig.COLUMN_1_WEIGHT)
-                    TableHeader(text = "Current", weight = ColumnConfig.COLUMN_2_WEIGHT)
-                    TableHeader(text = "Volume", weight = ColumnConfig.COLUMN_3_WEIGHT)
-                }
-            }
-            // Here are all the lines of your table.
-            items(coins) {
-                val (coin, predicted, volume) = it
-                Row(Modifier.fillMaxWidth()) {
-                    TableRow(text = coin, weight = ColumnConfig.COLUMN_1_WEIGHT)
-                    TableRow(text = predicted, weight = ColumnConfig.COLUMN_2_WEIGHT)
-                    TableRow(text = volume.formatNumberWithThousandsSeparator(), weight = ColumnConfig.COLUMN_3_WEIGHT)
-                }
-            }
-        }
-    }
-}
-
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-fun RateScreenPreview() {
-    FundingRateTheme {
-        val sampleData = listOf(
-            FundingRate("BTC", "+0.0100%", 994612300),
-            FundingRate("ETH", "+0.0100%", 894612300),
-            FundingRate("BNB", "+0.0180%", 794612300)
-        )
-        RateScreen(sampleData, false) {}
-    }
-}
-
-@Preview
-@Composable
-fun LoadingScreenPreview() {
-    FundingRateTheme {
-        LoadingScreen()
-    }
-}
