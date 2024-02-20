@@ -30,7 +30,7 @@ class FundingRateScreenViewModel @Inject constructor(
         }
     }
 
-    private fun getFundingRates() {
+    fun getFundingRates() {
         viewModelScope.launch {
             repository
                 .getFundingRates()
