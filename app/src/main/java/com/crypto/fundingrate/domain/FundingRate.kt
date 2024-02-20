@@ -1,3 +1,6 @@
 package com.crypto.fundingrate.domain
 
-data class FundingRate(val coin: String, val current: String, val predicted: String)
+data class FundingRate(
+    val coin: String,
+    val predicted: String,
+    val volume: Long)

@@ -1,6 +1,7 @@
 package com.crypto.fundingrate.data
 
 import com.crypto.fundingrate.data.dto.ByBitTickerResponse
+import com.crypto.fundingrate.data.dto.formatNumberWithThousandsSeparator
 import com.crypto.fundingrate.data.dto.toFundingRate
 import com.crypto.fundingrate.domain.FundingRate
 import kotlinx.coroutines.flow.Flow
@@ -17,21 +18,23 @@ class FundingRateRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading(true))
             val byBitTickerResponse: ByBitTickerResponse? = try {
-                val response = fundingRateRemoteDataSource.getFundingRates().execute()
-                if (response.isSuccessful) {
-                    response.body()
-                } else {
-                    null
-                }
+                fundingRateRemoteDataSource.getFundingRates()
             } catch (e: IOException) {
                 e.printStackTrace()
                 null
             }
-            byBitTickerResponse?.also { response ->
+           byBitTickerResponse?.also { response ->
                 if (!response.result.list.isNullOrEmpty()) {
-                    emit(Resource.Success(response.result.list.map { it.toFundingRate() }))
+                    emit(Resource.Success(
+                        response
+                            .result
+                            .list
+                            .map { it.toFundingRate() }
+                            .sortedByDescending { a -> a.volume }
+                    ))
                 }
             } ?: emit(Resource.Error("Couldn't load data"))
+
 
             // stop loading
             emit(Resource.Loading(false))

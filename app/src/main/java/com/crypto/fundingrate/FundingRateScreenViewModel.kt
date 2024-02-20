@@ -34,22 +34,21 @@ class FundingRateScreenViewModel @Inject constructor(
     }
 
     private fun getFundingRates() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository
                 .getFundingRates()
                 .collect { result ->
                     when(result) {
                         is Resource.Success -> {
                             result.data?.let {
-                                // transform
-                                state = state.copy(fundingRates = it)
+                                state = state.copy(isLoading = false, fundingRates = it)
                             }
                         }
                         is Resource.Error -> {
-
+                            state = state.copy(isLoading = false, fundingRates = emptyList())
                         }
                         is Resource.Loading -> {
-                          //  state = state.copy(isLoading = result.isLoading)
+                            state = state.copy(isLoading = result.isLoading)
                         }
                     }
                 }

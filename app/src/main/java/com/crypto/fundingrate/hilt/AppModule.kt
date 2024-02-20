@@ -14,6 +14,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonBuilder
 import kotlinx.serialization.json.JsonConfiguration
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -30,16 +32,28 @@ abstract class AppModule {
 @Module
 @InstallIn(SingletonComponent::class)
 internal object MyProviderModule {
+    // "https://api.bybit.com/"
+    private val BYBIT_BASE_URL_V5 = "https://api-testnet.bybit.com"
     @Provides
     @Singleton
     fun provideByBitService(
     ): ByBitService {
         val contentType = "application/json".toMediaType()
-        val json = Json { ignoreUnknownKeys = true}
+
+        val json = Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        //    prettyPrint = true
+         //   encodeDefaults = true
+        }
 
         return Retrofit.Builder()
-            .baseUrl("https://api.bybit.com/")
+            .baseUrl(BYBIT_BASE_URL_V5)
             .addConverterFactory(json.asConverterFactory(contentType))
+            .client(
+                OkHttpClient.Builder()
+                .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.NONE }).build())
+
             .build()
             .create(ByBitService::class.java)
     }

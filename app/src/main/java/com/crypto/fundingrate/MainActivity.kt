@@ -12,24 +12,26 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.crypto.fundingrate.data.dto.formatNumberWithThousandsSeparator
 import com.crypto.fundingrate.domain.FundingRate
 import com.crypto.fundingrate.ui.theme.FundingRateTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val viewModel: FundingRateScreenViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -39,8 +41,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val viewModel: FundingRateScreenViewModel by viewModels()
                     val state = viewModel.state
-                    RateScreen(state.fundingRates)
+                    if (state.isLoading) {
+                        LoadingScreen()
+                    } else {
+                        RateScreen(state.fundingRates)
+                    }
                 }
             }
         }
@@ -48,13 +55,21 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun RowScope.TableRow(
+fun RowScope.TableHeader(
     text: String,
     weight: Float
 ) {
+    TableRow(text, weight, true)
+}
+@Composable
+fun RowScope.TableRow(
+    text: String,
+    weight: Float,
+    isHeader: Boolean = false
+) {
     Text(
         text = text,
-        fontWeight = FontWeight.Bold,
+        fontWeight = if (isHeader) FontWeight.Bold else FontWeight.Light,
         modifier = Modifier
             .border(1.dp, MaterialTheme.colorScheme.onPrimary)
             .weight(weight)
@@ -64,36 +79,40 @@ fun RowScope.TableRow(
 
 @Composable
 fun LoadingScreen() {
-    
+    CircularProgressIndicator(
+        modifier = Modifier.width(64.dp),
+        color = MaterialTheme.colorScheme.secondary,
+        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+    )
 }
 
 @Composable
 fun RateScreen(coins: List<FundingRate>) {
     // Each cell of a column must have the same weight.
-    val column1Weight = .20f // 20%
-    val column2Weight = .4f // 40%
-    val column3Weight = .4f // 40%
+    val column1Weight = .30f // 20%
+    val column2Weight = .4f // 30%
+    val column3Weight = .4f // 30%
+
     // The LazyColumn will be our table. Notice the use of the weights below
     LazyColumn(
         Modifier
             .fillMaxWidth()
-            .padding(16.dp)
             .background(MaterialTheme.colorScheme.tertiaryContainer)) {
         // Here is the header
         item {
             Row(Modifier.background(MaterialTheme.colorScheme.primaryContainer)) {
-                TableRow(text = "Coin", weight = column1Weight)
-                TableRow(text = "Current", weight = column2Weight)
-                TableRow(text = "Predicted", weight = column3Weight)
+                TableHeader(text = "Coin", weight = column1Weight)
+                TableHeader(text = "Current", weight = column2Weight)
+                TableHeader(text = "Volume", weight = column3Weight)
             }
         }
         // Here are all the lines of your table.
         items(coins) {
-            val (coin, current, predicted) = it
+            val (coin, predicted, volume) = it
             Row(Modifier.fillMaxWidth()) {
                 TableRow(text = coin, weight = column1Weight)
-                TableRow(text = current, weight = column2Weight)
-                TableRow(text = predicted, weight = column3Weight)
+                TableRow(text = predicted, weight = column2Weight)
+                TableRow(text = volume.formatNumberWithThousandsSeparator(), weight = column3Weight)
             }
         }
     }
@@ -104,9 +123,9 @@ fun RateScreen(coins: List<FundingRate>) {
 fun RateScreenPreview() {
     FundingRateTheme {
         val sampleData = listOf(
-            FundingRate("BTC", "+0.0100%", "+0.0100%"),
-            FundingRate("ETH", "+0.0100%", "+0.0100%"),
-            FundingRate("BNB", "+0.0169%", "+0.0180%")
+            FundingRate("BTC", "+0.0100%", 994612300),
+            FundingRate("ETH", "+0.0100%", 894612300),
+            FundingRate("BNB", "+0.0180%", 794612300)
         )
         RateScreen(sampleData)
     }
