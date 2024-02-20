@@ -24,8 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.crypto.fundingrate.data.dto.formatNumberWithThousandsSeparator
-import com.crypto.fundingrate.domain.FundingRate
+import com.crypto.fundingrate.data.remote.dto.formatNumberWithThousandsSeparator
+import com.crypto.fundingrate.domain.model.FundingRate
+import com.crypto.fundingrate.presentation.fundingratescreen.FundingRateScreenViewModel
 import com.crypto.fundingrate.ui.theme.FundingRateTheme
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -1,6 +1,6 @@
-package com.crypto.fundingrate.data
+package com.crypto.fundingrate.data.remote
 
-import com.crypto.fundingrate.data.dto.ByBitTickerResponse
+import com.crypto.fundingrate.data.remote.dto.ByBitTickerResponse
 import retrofit2.Call
 import retrofit2.http.GET
 

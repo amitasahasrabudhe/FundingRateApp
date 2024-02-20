@@ -1,4 +1,4 @@
-package com.crypto.fundingrate.domain
+package com.crypto.fundingrate.domain.model
 
 data class FundingRate(
     val coin: String,

@@ -1,6 +1,7 @@
-package com.crypto.fundingrate.data
+package com.crypto.fundingrate.domain.repository
 
-import com.crypto.fundingrate.domain.FundingRate
+import com.crypto.fundingrate.util.Resource
+import com.crypto.fundingrate.domain.model.FundingRate
 import kotlinx.coroutines.flow.Flow
 
 interface FundingRateRepository {

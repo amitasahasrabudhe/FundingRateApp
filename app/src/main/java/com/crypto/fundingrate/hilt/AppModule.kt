@@ -1,9 +1,9 @@
 package com.crypto.fundingrate.hilt
 
-import com.crypto.fundingrate.data.ByBitService
+import com.crypto.fundingrate.data.remote.ByBitService
 import com.crypto.fundingrate.data.FundingRateRemoteDataSource
-import com.crypto.fundingrate.data.FundingRateRepository
-import com.crypto.fundingrate.data.FundingRateRepositoryImpl
+import com.crypto.fundingrate.domain.repository.FundingRateRepository
+import com.crypto.fundingrate.data.repository.FundingRateRepositoryImpl
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Binds
 import dagger.Module
@@ -11,8 +11,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonBuilder
-import kotlinx.serialization.json.JsonConfiguration
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

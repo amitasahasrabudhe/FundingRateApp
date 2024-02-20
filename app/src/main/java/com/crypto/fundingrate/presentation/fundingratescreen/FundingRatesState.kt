@@ -1,6 +1,6 @@
-package com.crypto.fundingrate.presentation
+package com.crypto.fundingrate.presentation.fundingratescreen
 
-import com.crypto.fundingrate.domain.FundingRate
+import com.crypto.fundingrate.domain.model.FundingRate
 
 data class FundingRatesState (
     val fundingRates: List<FundingRate> = emptyList(),

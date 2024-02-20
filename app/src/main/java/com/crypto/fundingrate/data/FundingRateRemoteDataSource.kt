@@ -1,9 +1,8 @@
 package com.crypto.fundingrate.data
 
-import android.util.Log
-import com.crypto.fundingrate.data.dto.ByBitTickerResponse
+import com.crypto.fundingrate.data.remote.ByBitService
+import com.crypto.fundingrate.data.remote.dto.ByBitTickerResponse
 import kotlinx.serialization.json.Json
-import retrofit2.Call
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -64,7 +63,7 @@ fun main(args: Array<String>) {
         isLenient = true
     }
 
-    val decoded:ByBitTickerResponse = json.decodeFromString<ByBitTickerResponse>(str)
+    val decoded: ByBitTickerResponse = json.decodeFromString<ByBitTickerResponse>(str)
     decoded.result.list?.get(0)?.symbol?.let {
         System.out.println("Symbol found: $it")
     }

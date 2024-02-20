@@ -1,6 +1,6 @@
-package com.crypto.fundingrate.data.dto
+package com.crypto.fundingrate.data.remote.dto
 
-import com.crypto.fundingrate.domain.FundingRate
+import com.crypto.fundingrate.domain.model.FundingRate
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.text.DecimalFormat

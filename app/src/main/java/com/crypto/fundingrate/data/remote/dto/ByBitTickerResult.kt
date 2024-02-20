@@ -1,4 +1,4 @@
-package com.crypto.fundingrate.data.dto
+package com.crypto.fundingrate.data.remote.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

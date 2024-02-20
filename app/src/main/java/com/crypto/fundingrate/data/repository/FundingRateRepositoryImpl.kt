@@ -1,9 +1,11 @@
-package com.crypto.fundingrate.data
+package com.crypto.fundingrate.data.repository
 
-import com.crypto.fundingrate.data.dto.ByBitTickerResponse
-import com.crypto.fundingrate.data.dto.formatNumberWithThousandsSeparator
-import com.crypto.fundingrate.data.dto.toFundingRate
-import com.crypto.fundingrate.domain.FundingRate
+import com.crypto.fundingrate.data.FundingRateRemoteDataSource
+import com.crypto.fundingrate.util.Resource
+import com.crypto.fundingrate.data.remote.dto.ByBitTickerResponse
+import com.crypto.fundingrate.data.remote.dto.toFundingRate
+import com.crypto.fundingrate.domain.model.FundingRate
+import com.crypto.fundingrate.domain.repository.FundingRateRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.IOException
@@ -25,7 +27,8 @@ class FundingRateRepositoryImpl @Inject constructor(
             }
            byBitTickerResponse?.also { response ->
                 if (!response.result.list.isNullOrEmpty()) {
-                    emit(Resource.Success(
+                    emit(
+                        Resource.Success(
                         response
                             .result
                             .list

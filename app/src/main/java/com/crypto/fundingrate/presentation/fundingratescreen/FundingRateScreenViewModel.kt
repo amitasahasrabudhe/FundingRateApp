@@ -1,17 +1,14 @@
-package com.crypto.fundingrate
+package com.crypto.fundingrate.presentation.fundingratescreen
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.crypto.fundingrate.data.FundingRateRepository
-import com.crypto.fundingrate.data.Resource
+import com.crypto.fundingrate.domain.repository.FundingRateRepository
+import com.crypto.fundingrate.util.Resource
 import com.crypto.fundingrate.presentation.FundingRateChangeEvent
-import com.crypto.fundingrate.presentation.FundingRatesState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
