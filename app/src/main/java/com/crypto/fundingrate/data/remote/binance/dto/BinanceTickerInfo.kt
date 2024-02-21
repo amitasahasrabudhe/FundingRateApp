@@ -23,7 +23,7 @@ data class BinanceTickerInfo(
 
 fun BinanceTickerInfo.toFundingRate(): FundingRate {
     return FundingRate(
-        symbol = symbol ?: "",
+        symbol = symbol?.dropLast(4) ?: "",
         predictedFundingRate = fundingRate ?: "",
         volume = 0
     )
