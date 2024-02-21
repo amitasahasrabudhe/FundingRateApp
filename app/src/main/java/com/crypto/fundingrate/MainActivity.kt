@@ -1,46 +1,32 @@
 package com.crypto.fundingrate
 
-import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.crypto.fundingrate.data.remote.dto.formatNumberWithThousandsSeparator
-import com.crypto.fundingrate.domain.model.FundingRate
 import com.crypto.fundingrate.presentation.fundingratescreen.FundingRateScreenViewModel
+import com.crypto.fundingrate.domain.model.CryptoExchange
 import com.crypto.fundingrate.ui.fundingratescreen.LoadingScreen
 import com.crypto.fundingrate.ui.fundingratescreen.RateScreen
 import com.crypto.fundingrate.ui.theme.FundingRateTheme
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -51,15 +37,46 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val viewModel: FundingRateScreenViewModel by viewModels()
-                    val state = viewModel.state
-                    if (state.isLoading) {
-                        LoadingScreen()
-                    } else {
-                        RateScreen(state.fundingRates, state.isLoading, viewModel::getFundingRates)
+                    val pagerState = rememberPagerState(pageCount = {
+                        3
+                    })
+                    LaunchedEffect(pagerState) {
+                        // Collect from the a snapshotFlow reading the currentPage
+                        snapshotFlow { pagerState.currentPage }.collect { page ->
+                            // Do something with each page change, for example:
+                            // viewModel.sendPageSelectedEvent(page)
+                            Log.d("Page change", "Page changed to $page")
+                            viewModel.updateExchange(CryptoExchange.fromInt(page))
+                        }
                     }
+
+                    HorizontalPager(state = pagerState) { page ->
+                        if (page == 2) {
+                            Text("Work in progress on page $page")
+                        } else {
+                            Log.d("MyPager", "Loading page $page")
+                            FundingRatePagerScreen(viewModel = viewModel)
+                        }
+                    }
+
+
                 }
             }
         }
     }
 }
 
+@Composable
+fun FundingRatePagerScreen(viewModel: FundingRateScreenViewModel) {
+    val state = viewModel.state
+    if (state.isLoading) {
+        LoadingScreen()
+    } else {
+        RateScreen(
+            state.getFundingRates(),
+            state.isLoading
+        ) {
+            viewModel.getFundingRates()
+        }
+    }
+}

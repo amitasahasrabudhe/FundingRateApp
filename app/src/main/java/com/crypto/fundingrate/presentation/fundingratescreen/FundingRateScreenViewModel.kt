@@ -7,9 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.crypto.fundingrate.domain.repository.FundingRateRepository
+import com.crypto.fundingrate.domain.model.CryptoExchange
 import com.crypto.fundingrate.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,8 +35,16 @@ class FundingRateScreenViewModel @Inject constructor(
         super.onCleared()
         timerJob?.cancel()
     }
+
     init {
         getFundingRates()
+    }
+
+    fun updateExchange(newExchange: CryptoExchange) {
+        if (!state.exchange.equals(newExchange)) {
+            state = state.copy(exchange = newExchange)
+            getFundingRates()
+        }
     }
 
     private fun startTimer() {
@@ -64,21 +72,39 @@ class FundingRateScreenViewModel @Inject constructor(
 
     fun getFundingRates() {
         viewModelScope.launch {
+            // copy over the value to this scope as it may change by the time coroutine finishes
+            val exchange = state.exchange
             repository
-                .getFundingRates()
+                .getFundingRates(exchange)
                 .collect { result ->
                     when(result) {
                         is Resource.Success -> {
                             result.data?.let {
-                                state = state.copy(isLoading = false, fundingRates = it)
+                                when(exchange) {
+                                    CryptoExchange.BYBIT -> state = state.copy(isByBitDataLoading = false, bybitFundingRates = it)
+                                    CryptoExchange.BINANCE -> state = state.copy(isBinanceDataLoading = false, binanceFundingRates = it)
+                                    CryptoExchange.OKX -> state = state.copy(isOKXDataLoading = false, okxFundingRates = it)
+                                }
+
                                 startTimer()
                             }
                         }
                         is Resource.Error -> {
-                            state = state.copy(isLoading = false, fundingRates = emptyList())
+                            when(exchange) {
+                                CryptoExchange.BYBIT ->
+                                    state = state.copy(isByBitDataLoading = false, bybitFundingRates = emptyList())
+                                CryptoExchange.BINANCE ->
+                                    state = state.copy(isBinanceDataLoading = false, binanceFundingRates = emptyList())
+                                CryptoExchange.OKX ->
+                                    state = state.copy(isOKXDataLoading = false, okxFundingRates = emptyList())
+                            }
                         }
                         is Resource.Loading -> {
-                            state = state.copy(isLoading = result.isLoading)
+                            when(exchange) {
+                                CryptoExchange.BYBIT -> state = state.copy(isByBitDataLoading = result.isLoading)
+                                CryptoExchange.BINANCE -> state = state.copy(isBinanceDataLoading = result.isLoading)
+                                CryptoExchange.OKX -> state = state.copy(isOKXDataLoading = result.isLoading)
+                            }
                         }
                     }
                 }

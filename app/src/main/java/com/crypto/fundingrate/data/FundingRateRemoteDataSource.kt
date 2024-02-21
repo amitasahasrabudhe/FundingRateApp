@@ -1,23 +1,62 @@
 package com.crypto.fundingrate.data
 
-import com.crypto.fundingrate.data.remote.ByBitService
-import com.crypto.fundingrate.data.remote.dto.ByBitTickerResponse
-import kotlinx.serialization.json.Json
+import com.crypto.fundingrate.data.remote.binance.BinanceService
+import com.crypto.fundingrate.data.remote.binance.dto.toFundingRate
+import com.crypto.fundingrate.data.remote.bybit.ByBitService
+import com.crypto.fundingrate.data.remote.bybit.dto.toFundingRate
+import com.crypto.fundingrate.domain.model.CryptoExchange
+import com.crypto.fundingrate.domain.model.FundingRate
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FundingRateRemoteDataSource @Inject constructor (
-    private val service: ByBitService
+    private val byBitService: ByBitService,
+    private val binanceService: BinanceService
 ) {
-    suspend fun getFundingRates(): ByBitTickerResponse {
-        return service.getTickerInfo()
+    suspend fun getFundingRates(exchange: CryptoExchange): List<FundingRate> {
+        when(exchange) {
+            CryptoExchange.BYBIT -> {
+                val response =  try {
+                    byBitService.getTickerInfo()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    null
+                }
+                if (!response?.result?.list.isNullOrEmpty()) {
+                    val list = response!!.result.list
+                    if (list != null) {
+                        return list.map { it.toFundingRate() }.sortedByDescending { a -> a.volume }
+                    }
+                } else {
+                    return emptyList()
+                }
+            }
+            CryptoExchange.BINANCE -> {
+                val list = try {
+                    binanceService.getTickerInfo()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    null
+                }
+                if (!list.isNullOrEmpty()) {
+                    return list!!.map { it.toFundingRate() }.sortedByDescending { a -> a.volume }
+                }
+            }
+            CryptoExchange.OKX -> {
+                return emptyList()
+            }
+
+        }
+        return emptyList()
     }
 
 
 
 }
 
+/*
 fun main(args: Array<String>) {
     val str = """{
   "retCode": 0,
@@ -69,3 +108,4 @@ fun main(args: Array<String>) {
     }
 
 }
+ */

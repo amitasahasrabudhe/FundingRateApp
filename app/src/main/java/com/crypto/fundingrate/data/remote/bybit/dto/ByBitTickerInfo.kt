@@ -1,4 +1,4 @@
-package com.crypto.fundingrate.data.remote.dto
+package com.crypto.fundingrate.data.remote.bybit.dto
 
 import com.crypto.fundingrate.domain.model.FundingRate
 import kotlinx.serialization.SerialName
@@ -55,8 +55,8 @@ data class ByBitTickerInfo (
 
 fun ByBitTickerInfo.toFundingRate(): FundingRate {
     return FundingRate(
-        coin = symbol?.dropLast(4) ?: "",
-        predicted = predictedFundingRate?: "",
+        symbol = symbol?.dropLast(4) ?: "",
+        predictedFundingRate = predictedFundingRate?: "",
         // it is important to convert the volume string to double as the api sends it in double format
         // e.g. 1096522749.3875
         volume = volume?.toDouble()?.toLong() ?: 0)

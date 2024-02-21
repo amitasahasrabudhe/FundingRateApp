@@ -1,6 +1,6 @@
-package com.crypto.fundingrate.data.remote
+package com.crypto.fundingrate.data.remote.bybit
 
-import com.crypto.fundingrate.data.remote.dto.ByBitTickerResponse
+import com.crypto.fundingrate.data.remote.bybit.dto.ByBitTickerResponse
 import retrofit2.http.GET
 
 interface ByBitService {
@@ -9,7 +9,7 @@ interface ByBitService {
     // https://api.bybit.com/derivatives/v3/public/tickers?category=linear
 
     // new api v5
-    // https://api-testnet.bybit.com/v5/market/tickers
+    // https://api.bybit.com/v5/market/tickers
     @GET("/v5/market/tickers?category=linear")
     suspend fun getTickerInfo(): ByBitTickerResponse
 }

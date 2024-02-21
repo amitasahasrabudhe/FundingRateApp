@@ -1,6 +1,6 @@
 package com.crypto.fundingrate.domain.model
 
 data class FundingRate(
-    val coin: String,
-    val predicted: String,
+    val symbol: String,
+    val predictedFundingRate: String,
     val volume: Long)
