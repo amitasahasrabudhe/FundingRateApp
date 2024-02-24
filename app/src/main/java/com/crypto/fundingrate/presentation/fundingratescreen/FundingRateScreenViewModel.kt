@@ -47,6 +47,15 @@ class FundingRateScreenViewModel @Inject constructor(
         }
     }
 
+    fun selectExchange(newExchange: CryptoExchange): Boolean {
+        if (!state.exchange.equals(newExchange)) {
+            state = state.copy(exchange = newExchange)
+            getFundingRates()
+            return true
+        }
+        return false
+    }
+
     private fun startTimer() {
         timerJob?.cancel()
         timerJob = viewModelScope.launch {

@@ -76,7 +76,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.50")
     kapt("com.google.dagger:hilt-android-compiler:2.50")
 
-    implementation ("com.google.accompanist:accompanist-swiperefresh:0.24.13-rc")
+    implementation ("com.google.accompanist:accompanist-swiperefresh:0.27.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
