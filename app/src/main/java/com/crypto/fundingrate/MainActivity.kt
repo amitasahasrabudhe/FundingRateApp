@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,9 +15,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -31,11 +34,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.crypto.fundingrate.domain.model.CryptoExchange
 import com.crypto.fundingrate.presentation.fundingratescreen.FundingRateScreenViewModel
-import com.crypto.fundingrate.ui.fundingratescreen.LoadingScreen
 import com.crypto.fundingrate.ui.fundingratescreen.RateScreen
 import com.crypto.fundingrate.ui.theme.FundingRateTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -96,16 +100,19 @@ fun TabHeaders(tabIndex: CryptoExchange, pagerState: PagerState, coroutineScope:
     TabRow(
         selectedTabIndex = pagerState.currentPage
     ) {
-        val tabTitles: List<String> = listOf (
-            R.string.bybit_exchange_name,
-            R.string.binance_exchange_name,
-            R.string.okx_exchange_name
-        ).map { stringResource(id = it) }
+        val tabResources: List<Pair<String, Painter>> = listOf (
+            Pair(R.string.bybit_exchange_name, R.drawable.bybit_logo),
+            Pair(R.string.binance_exchange_name, R.drawable.binance_exchange_logo),
+            Pair(R.string.okx_exchange_name, R.drawable.okx_logo)
+        ).map {  Pair(stringResource(id = it.first), painterResource(id = it.second)) }
 
-        tabTitles.forEachIndexed { index, title ->
+
+        tabResources.forEachIndexed { index, tab ->
             TabHeader(
                 selected = tabIndex.exchangeNumber == index,
-                title = title) {
+                title = tab.first,
+                painter = tab.second
+            ) {
                 coroutineScope.launch {
                     pagerState.animateScrollToPage(index)
                 }
@@ -118,6 +125,7 @@ fun TabHeaders(tabIndex: CryptoExchange, pagerState: PagerState, coroutineScope:
 fun TabHeader(
     selected: Boolean,
     title: String,
+    painter: Painter,
     onClick: () -> Unit
 ) {
     Tab(
@@ -129,17 +137,19 @@ fun TabHeader(
             Modifier
                 .padding(10.dp)
                 .height(50.dp),
-            verticalArrangement = Arrangement.Bottom
+            verticalArrangement = Arrangement.SpaceAround
         ) {
-            Box(
+           /* Box(
                 Modifier
-                    .size(10.dp)
+                    .width(40.dp)
+                    .height(20.dp)
                     .align(Alignment.CenterHorizontally)
-                    .background(
-                        color = if (selected) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.background
-                    )
-            )
+            ) {
+                Image(
+                    painter = painter,
+                    contentDescription = null
+                )
+            }*/
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
@@ -152,14 +162,10 @@ fun TabHeader(
 @Composable
 fun FundingRatePager(viewModel: FundingRateScreenViewModel) {
     val state = viewModel.state
-    if (state.isLoading) {
-        LoadingScreen()
-    } else {
         RateScreen(
             state.getFundingRates(),
             state.isLoading
         ) {
             viewModel.getFundingRates()
         }
-    }
 }
