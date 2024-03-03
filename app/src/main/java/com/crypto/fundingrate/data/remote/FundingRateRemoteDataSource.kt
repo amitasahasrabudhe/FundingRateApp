@@ -1,4 +1,4 @@
-package com.crypto.fundingrate.data
+package com.crypto.fundingrate.data.remote
 
 import com.crypto.fundingrate.data.remote.binance.BinanceService
 import com.crypto.fundingrate.data.remote.binance.dto.toFundingRate

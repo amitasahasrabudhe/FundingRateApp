@@ -1,7 +1,7 @@
 package com.crypto.fundingrate.hilt
 
 import com.crypto.fundingrate.data.remote.bybit.ByBitService
-import com.crypto.fundingrate.data.FundingRateRemoteDataSource
+import com.crypto.fundingrate.data.remote.FundingRateRemoteDataSource
 import com.crypto.fundingrate.data.remote.binance.BinanceService
 import com.crypto.fundingrate.domain.repository.FundingRateRepository
 import com.crypto.fundingrate.data.repository.FundingRateRepositoryImpl
@@ -31,9 +31,9 @@ abstract class AppModule {
 @Module
 @InstallIn(SingletonComponent::class)
 internal object MyProviderModule {
-    // "https://api.bybit.com/"
     private val BYBIT_BASE_URL_V5 = "https://api.bybit.com"
     private val BINANCE_BASE_URL_V1 = "https://fapi.binance.com"
+
     @Provides
     @Singleton
     fun provideByBitService(
@@ -71,7 +71,6 @@ internal object MyProviderModule {
             .build()
             .create(BinanceService::class.java)
     }
-
 
     @Provides
     @Singleton

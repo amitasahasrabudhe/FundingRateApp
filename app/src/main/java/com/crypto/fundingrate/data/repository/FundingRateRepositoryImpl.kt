@@ -1,15 +1,12 @@
 package com.crypto.fundingrate.data.repository
 
-import com.crypto.fundingrate.data.FundingRateRemoteDataSource
-import com.crypto.fundingrate.util.Resource
-import com.crypto.fundingrate.data.remote.bybit.dto.ByBitTickerResponse
-import com.crypto.fundingrate.data.remote.bybit.dto.toFundingRate
+import com.crypto.fundingrate.data.remote.FundingRateRemoteDataSource
+import com.crypto.fundingrate.domain.model.CryptoExchange
 import com.crypto.fundingrate.domain.model.FundingRate
 import com.crypto.fundingrate.domain.repository.FundingRateRepository
-import com.crypto.fundingrate.domain.model.CryptoExchange
+import com.crypto.fundingrate.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 

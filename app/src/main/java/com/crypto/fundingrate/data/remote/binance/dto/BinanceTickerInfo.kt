@@ -26,6 +26,7 @@ fun BinanceTickerInfo.toFundingRate(): FundingRate {
         // TODO: filter coins with suffix = "PERP"
         symbol = symbol?.dropLast(4) ?: "",
         predictedFundingRate = fundingRate ?: "",
+        //TODO: Join volume data from another API request
         volume = 0
     )
 }

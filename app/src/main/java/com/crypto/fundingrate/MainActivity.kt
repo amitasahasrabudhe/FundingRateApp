@@ -6,20 +6,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -75,7 +69,6 @@ class MainActivity : ComponentActivity() {
                     LaunchedEffect(pagerState) {
                         // Collect from the a snapshotFlow reading the currentPage
                         snapshotFlow { pagerState.currentPage }.collect { page ->
-                            // Do something with each page change, for example:
                             Log.d("Page change", "Page changed to $page")
                             viewModel.updateExchange(CryptoExchange.fromInt(page))
                         }
@@ -128,10 +121,10 @@ fun TabHeader(
     painter: Painter,
     onClick: () -> Unit
 ) {
+
     Tab(
         selected,
         onClick = onClick,
-       // modifier = Modifier.weight(0.33f)
     ) {
         Column(
             Modifier
@@ -139,6 +132,7 @@ fun TabHeader(
                 .height(50.dp),
             verticalArrangement = Arrangement.SpaceAround
         ) {
+            // TODO Use paint resource to display exchange icon
            /* Box(
                 Modifier
                     .width(40.dp)
@@ -162,10 +156,10 @@ fun TabHeader(
 @Composable
 fun FundingRatePager(viewModel: FundingRateScreenViewModel) {
     val state = viewModel.state
-        RateScreen(
-            state.getFundingRates(),
-            state.isLoading
-        ) {
-            viewModel.getFundingRates()
-        }
+    RateScreen(
+        state.getFundingRates(),
+        state.isLoading
+    ) {
+        viewModel.getFundingRates()
+    }
 }
