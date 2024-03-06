@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
                     LaunchedEffect(pagerState) {
                         // Collect from the a snapshotFlow reading the currentPage
                         snapshotFlow { pagerState.currentPage }.collect { page ->
-                            Log.d("Page change", "Page changed to $page")
+                            Log.d("MyPager", "Page changed to $page")
                             viewModel.updateExchange(CryptoExchange.fromInt(page))
                         }
                     }
