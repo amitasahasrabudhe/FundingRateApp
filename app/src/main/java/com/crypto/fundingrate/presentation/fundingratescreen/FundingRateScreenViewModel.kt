@@ -26,8 +26,7 @@ class FundingRateScreenViewModel @Inject constructor(
     var state by mutableStateOf(FundingRatesState())
     private set
 
-    private var _timer = MutableStateFlow(0L);
-  //  val timer = _timer.asStateFlow()
+    private var _timer = MutableStateFlow(0L)
 
     private var timerJob: Job? = null
 
@@ -45,15 +44,6 @@ class FundingRateScreenViewModel @Inject constructor(
             state = state.copy(exchange = newExchange)
             getFundingRates()
         }
-    }
-
-    fun selectExchange(newExchange: CryptoExchange): Boolean {
-        if (!state.exchange.equals(newExchange)) {
-            state = state.copy(exchange = newExchange)
-            getFundingRates()
-            return true
-        }
-        return false
     }
 
     private fun startTimer() {
